@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { HomeHeroActions } from "@/features/home/components/HomeHeroActions";
 
 export default function Home() {
   return (
@@ -19,21 +19,7 @@ export default function Home() {
             easy-to-use platform.
           </p>
 
-          <div className="mt-10 flex flex-wrap gap-4">
-            <Link
-              href="/events"
-              className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700"
-            >
-              Browse events
-            </Link>
-
-            <Link
-              href="/register"
-              className="rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-300 hover:text-blue-700"
-            >
-              Create account
-            </Link>
-          </div>
+          <HomeHeroActions />
         </div>
       </section>
 
@@ -43,6 +29,7 @@ export default function Home() {
             <h2 className="text-lg font-semibold text-slate-900">
               Find events
             </h2>
+
             <p className="mt-3 text-sm leading-6 text-slate-600">
               Explore activities by category, location, and date.
             </p>
@@ -52,6 +39,7 @@ export default function Home() {
             <h2 className="text-lg font-semibold text-slate-900">
               Join communities
             </h2>
+
             <p className="mt-3 text-sm leading-6 text-slate-600">
               Connect with people who share your interests and goals.
             </p>
@@ -61,6 +49,7 @@ export default function Home() {
             <h2 className="text-lg font-semibold text-slate-900">
               Manage participation
             </h2>
+
             <p className="mt-3 text-sm leading-6 text-slate-600">
               Keep track of joined events and your own created activities.
             </p>

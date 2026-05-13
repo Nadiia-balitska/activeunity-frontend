@@ -1,5 +1,5 @@
 import { apiClient } from "./apiClient";
-import type { AuthResponse, LoginData, RegisterData } from "@/types/auth";
+import type { AuthResponse, AuthUser, LoginData, RegisterData } from "@/types/auth";
 
 export const authService = {
   register: async (data: RegisterData): Promise<AuthResponse> => {
@@ -12,8 +12,8 @@ export const authService = {
     return response.data;
   },
 
-  getMe: async (): Promise<AuthResponse["user"]> => {
-    const response = await apiClient.get<AuthResponse["user"]>("/auth/me");
-    return response.data;
-  },
+  getMe: async (): Promise<AuthUser> => {
+  const response = await apiClient.get<{ user: AuthUser }>("/auth/me");
+  return response.data.user;
+},
 };
