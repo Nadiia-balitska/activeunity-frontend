@@ -24,10 +24,10 @@ export const eventService = {
     return response.data.event;
   },
 
-  leaveEvent: async (id: string): Promise<Event> => {
-    const response = await apiClient.post<EventResponse>(`/events/${id}/leave`);
-    return response.data.event;
-  },
+leaveEvent: async (id: string): Promise<Event> => {
+  const response = await apiClient.delete<EventResponse>(`/events/${id}/leave`);
+  return response.data.event;
+},
 
   getEventParticipants: async (
     id: string

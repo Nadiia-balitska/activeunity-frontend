@@ -6,6 +6,10 @@ import { notFound } from "next/navigation";
 import { eventService } from "@/api/eventService";
 import type { Event } from "@/types/event";
 
+import { EventActions } from "@/features/events/components/EventActions";
+
+
+
 interface EventDetailsPageProps {
   params: Promise<{
     id: string;
@@ -101,6 +105,7 @@ export default async function EventDetailsPage({
                 </dd>
               </div>
             </dl>
+            <EventActions event={event} />
           </div>
         </article>
       </section>

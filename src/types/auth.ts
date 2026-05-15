@@ -13,9 +13,11 @@ export interface AuthUser {
   id: string;
   name: string;
   email: string;
+  role: "user" | "admin";
 }
 
 export interface AuthResponse {
-  user: AuthUser;
+  success: boolean;
   token: string;
+  user: AuthUser;
 }
