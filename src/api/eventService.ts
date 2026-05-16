@@ -12,12 +12,15 @@ import type {
 } from "@/types/event";
 
 export const eventService = {
-getEvents: async (filters?: EventFilters): Promise<Event[]> => {
+
+getEvents: async (
+  filters?: EventFilters & { page?: number }
+): Promise<EventsResponse> => {
   const response = await apiClient.get<EventsResponse>("/events", {
     params: filters,
   });
 
-  return response.data.events;
+  return response.data;
 },
 
   getEventById: async (id: string): Promise<Event> => {

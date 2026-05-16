@@ -9,6 +9,9 @@ import type { Event, EventFilters } from "@/types/event";
 
 export function EventsList() {
   const [events, setEvents] = useState<Event[]>([]);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+
   const [filters, setFilters] = useState<EventFilters>({
     search: "",
     category: "",
@@ -24,13 +27,15 @@ export function EventsList() {
         setIsLoading(true);
         setError("");
 
-        const data = await eventService.getEvents({
+        const response = await eventService.getEvents({
           search: filters.search || undefined,
           category: filters.category || undefined,
           status: filters.status || undefined,
+          page,
         });
 
-        setEvents(data);
+        setEvents(response.events);
+        setPages(response.pages || 1);
       } catch {
         setError("Failed to load events.");
       } finally {
@@ -39,7 +44,7 @@ export function EventsList() {
     };
 
     loadEvents();
-  }, [filters]);
+  }, [filters, page]);
 
   const handleFilterChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -50,6 +55,8 @@ export function EventsList() {
       ...prevFilters,
       [name]: value,
     }));
+
+    setPage(1);
   };
 
   const clearFilters = () => {
@@ -58,6 +65,8 @@ export function EventsList() {
       category: "",
       status: "",
     });
+
+    setPage(1);
   };
 
   return (
@@ -127,7 +136,7 @@ export function EventsList() {
             <button
               type="button"
               onClick={clearFilters}
-              className="rounded-xl border border-slate-700 bg-primary-hove px-4 py-3 text-sm font-semibold text-slate-300 transition hover:border-blue-500 hover:text-white"
+              className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm font-semibold text-slate-300 transition hover:border-blue-500 hover:text-white"
             >
               Clear filters
             </button>
@@ -155,11 +164,39 @@ export function EventsList() {
         )}
 
         {!isLoading && !error && events.length > 0 && (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {events.map((event) => (
-              <EventCard key={event.id || event._id} event={event} />
-            ))}
-          </div>
+          <>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {events.map((event) => (
+                <EventCard key={event.id || event._id} event={event} />
+              ))}
+            </div>
+
+            {pages > 1 && (
+              <div className="mt-10 flex items-center justify-center gap-4">
+                <button
+                  type="button"
+                  disabled={page === 1}
+                  onClick={() => setPage((prevPage) => prevPage - 1)}
+                  className="rounded-xl border border-slate-700 bg-slate-900 px-5 py-3 text-sm font-semibold text-slate-300 transition hover:border-blue-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Previous
+                </button>
+
+                <div className="rounded-xl border border-slate-800 bg-slate-900 px-5 py-3 text-sm font-semibold text-white">
+                  Page {page} of {pages}
+                </div>
+
+                <button
+                  type="button"
+                  disabled={page >= pages}
+                  onClick={() => setPage((prevPage) => prevPage + 1)}
+                  className="rounded-xl border border-slate-700 bg-slate-900 px-5 py-3 text-sm font-semibold text-slate-300 transition hover:border-blue-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
         )}
       </section>
     </main>
