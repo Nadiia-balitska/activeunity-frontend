@@ -127,22 +127,24 @@ export function EventActions({ event, onEventChange }: EventActionsProps) {
 
   if (!user) {
     return (
-      <p className="mt-8 rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
-        Please log in to join this event.
-      </p>
+      <div className="mt-8 rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
+        <p className="text-sm text-slate-300">
+          Please log in to join this event.
+        </p>
+      </div>
     );
   }
 
   return (
-    <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-      <p className="text-sm text-slate-600">
+    <div className="mt-8 rounded-2xl border border-slate-800 bg-slate-950/60 p-5">
+      <p className="text-sm text-slate-300">
         {participants.length}
         {event.maxParticipants ? ` / ${event.maxParticipants}` : ""}{" "}
         participants
       </p>
 
       {error && (
-        <p className="mt-3 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
+        <p className="mt-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
           {error}
         </p>
       )}
@@ -152,7 +154,7 @@ export function EventActions({ event, onEventChange }: EventActionsProps) {
           type="button"
           onClick={handleLeave}
           disabled={isLoading}
-          className="mt-4 rounded-xl border border-red-200 px-5 py-3 text-sm font-medium text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-5 py-3 text-sm font-semibold text-red-300 transition hover:bg-red-500/20 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isLoading ? "Leaving..." : "Leave event"}
         </button>
@@ -161,7 +163,7 @@ export function EventActions({ event, onEventChange }: EventActionsProps) {
           type="button"
           onClick={handleJoin}
           disabled={isLoading || isFull}
-          className="mt-4 rounded-xl bg-blue-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-4 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isLoading ? "Joining..." : isFull ? "Event is full" : "Join event"}
         </button>
