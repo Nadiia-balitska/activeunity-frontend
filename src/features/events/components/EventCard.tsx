@@ -12,7 +12,13 @@ function getEventId(event: Event) {
 }
 
 function getOrganizerId(event: Event) {
-  return event.organizer?.id || event.organizer?._id || "";
+  if (!event.organizer) return "";
+
+  if (typeof event.organizer === "string") {
+    return event.organizer;
+  }
+
+  return event.organizer.id || event.organizer._id || "";
 }
 
 export function EventCard({ event }: EventCardProps) {

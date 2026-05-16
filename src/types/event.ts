@@ -27,7 +27,7 @@ export interface Event {
   status?: string;
   maxParticipants?: number;
 
-  organizer?: EventOrganizer;
+organizer?: EventOrganizer | string;
   participants?: EventParticipantValue[];
 
   createdAt?: string;
