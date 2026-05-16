@@ -1,14 +1,18 @@
 export interface EventParticipant {
-  id: string;
+  id?: string;
+  _id?: string;
   name: string;
   email: string;
 }
 
 export interface EventOrganizer {
-  id: string;
+  id?: string;
+  _id?: string;
   name: string;
   email: string;
 }
+
+export type EventParticipantValue = EventParticipant | string;
 
 export interface Event {
   id?: string;
@@ -24,8 +28,7 @@ export interface Event {
   maxParticipants?: number;
 
   organizer?: EventOrganizer;
-
-  participants?: EventParticipant[];
+  participants?: EventParticipantValue[];
 
   createdAt?: string;
   updatedAt?: string;
@@ -37,8 +40,18 @@ export interface CreateEventData {
   date: string;
   location: string;
   category: string;
-
   image?: string;
+  maxParticipants?: number;
+}
+
+export interface UpdateEventData {
+  title?: string;
+  description?: string;
+  date?: string;
+  location?: string;
+  category?: string;
+  image?: string;
+  status?: string;
   maxParticipants?: number;
 }
 
@@ -54,6 +67,11 @@ export interface EventsResponse {
 export interface EventResponse {
   success: boolean;
   event: Event;
+}
+
+export interface DeleteEventResponse {
+  success: boolean;
+  message: string;
 }
 
 export interface ParticipantsResponse {
