@@ -79,3 +79,9 @@ export interface ParticipantsResponse {
   count: number;
   participants: EventParticipant[];
 }
+
+export interface EventFilters {
+  search?: string;
+  category?: string;
+  status?: string;
+}

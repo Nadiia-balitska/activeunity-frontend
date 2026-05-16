@@ -4,6 +4,7 @@ import type {
   CreateEventData,
   DeleteEventResponse,
   Event,
+  EventFilters,
   EventResponse,
   EventsResponse,
   ParticipantsResponse,
@@ -11,10 +12,13 @@ import type {
 } from "@/types/event";
 
 export const eventService = {
-  getEvents: async (): Promise<Event[]> => {
-    const response = await apiClient.get<EventsResponse>("/events");
-    return response.data.events;
-  },
+getEvents: async (filters?: EventFilters): Promise<Event[]> => {
+  const response = await apiClient.get<EventsResponse>("/events", {
+    params: filters,
+  });
+
+  return response.data.events;
+},
 
   getEventById: async (id: string): Promise<Event> => {
     const response = await apiClient.get<EventResponse>(`/events/${id}`);
