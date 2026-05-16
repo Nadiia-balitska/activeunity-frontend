@@ -126,7 +126,18 @@ export function EventDetailsContent({ event }: EventDetailsContentProps) {
 
             <EventActions event={currentEvent} onEventChange={setCurrentEvent} />
 
-            {isMyEvent && eventId && <EventOwnerActions eventId={eventId} />}
+          {isMyEvent && eventId && (
+  <EventOwnerActions
+    eventId={eventId}
+    currentStatus={currentEvent.status}
+    onStatusChange={(status) =>
+      setCurrentEvent((prevEvent) => ({
+        ...prevEvent,
+        status,
+      }))
+    }
+  />
+)}
           </div>
         </article>
       </section>

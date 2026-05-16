@@ -150,14 +150,14 @@ export function EventActions({ event, onEventChange }: EventActionsProps) {
       )}
 
       {isJoined ? (
-        <button
-          type="button"
-          onClick={handleLeave}
-          disabled={isLoading}
-          className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-5 py-3 text-sm font-semibold text-red-300 transition hover:bg-red-500/20 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {isLoading ? "Leaving..." : "Leave event"}
-        </button>
+       <button
+  type="button"
+  onClick={handleLeave}
+  disabled={isLoading}
+  className="mt-4 rounded-xl bg-blue-950 px-5 py-3 text-sm font-medium text-blue-200 transition hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-60"
+>
+  {isLoading ? "Leaving..." : "Leave event"}
+</button>
       ) : (
         <button
           type="button"
