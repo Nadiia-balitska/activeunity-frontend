@@ -9,6 +9,7 @@ import { useAuthStore } from "@/store/authStore";
 
 interface EventActionsProps {
   event: Event;
+  onEventChange: (event: Event) => void;
 }
 
 type AuthUserLike = {
@@ -36,25 +37,23 @@ function getParticipantId(participant: EventParticipant | string | undefined) {
   return participant.id || participant._id || "";
 }
 
-export function EventActions({ event }: EventActionsProps) {
+export function EventActions({ event, onEventChange }: EventActionsProps) {
   const { user } = useAuthStore();
 
-  const [currentEvent, setCurrentEvent] = useState<Event>(event);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const eventId = getEventId(currentEvent);
+  const eventId = getEventId(event);
   const userId = getUserId(user);
-
-  const participants = currentEvent.participants ?? [];
+  const participants = event.participants ?? [];
 
   const isJoined = participants.some(
     (participant) => getParticipantId(participant) === userId
   );
 
   const isFull =
-    currentEvent.maxParticipants !== undefined &&
-    participants.length >= currentEvent.maxParticipants;
+    event.maxParticipants !== undefined &&
+    participants.length >= event.maxParticipants;
 
   const handleJoin = async () => {
     if (!eventId) {
@@ -75,10 +74,10 @@ export function EventActions({ event }: EventActionsProps) {
 
       await eventService.joinEvent(eventId);
 
-      setCurrentEvent((prevEvent) => ({
-        ...prevEvent,
-        participants: [...(prevEvent.participants ?? []), userId],
-      }));
+      onEventChange({
+        ...event,
+        participants: [...participants, userId],
+      });
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.response?.data?.message || "Failed to join event.");
@@ -109,12 +108,12 @@ export function EventActions({ event }: EventActionsProps) {
 
       await eventService.leaveEvent(eventId);
 
-      setCurrentEvent((prevEvent) => ({
-        ...prevEvent,
-        participants: (prevEvent.participants ?? []).filter(
+      onEventChange({
+        ...event,
+        participants: participants.filter(
           (participant) => getParticipantId(participant) !== userId
         ),
-      }));
+      });
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.response?.data?.message || "Failed to leave event.");
@@ -138,9 +137,7 @@ export function EventActions({ event }: EventActionsProps) {
     <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5">
       <p className="text-sm text-slate-600">
         {participants.length}
-        {currentEvent.maxParticipants
-          ? ` / ${currentEvent.maxParticipants}`
-          : ""}{" "}
+        {event.maxParticipants ? ` / ${event.maxParticipants}` : ""}{" "}
         participants
       </p>
 

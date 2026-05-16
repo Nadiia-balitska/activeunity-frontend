@@ -7,11 +7,13 @@ interface EventCardProps {
 }
 
 export function EventCard({ event }: EventCardProps) {
-  const formattedDate = new Date(event.date).toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
+const formattedDate = new Date(event.date).toLocaleString("en-GB", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+});
 
   const participantsCount = event.participants?.length || 0;
 
@@ -38,9 +40,12 @@ export function EventCard({ event }: EventCardProps) {
               {event.category || "Community"}
             </span>
 
-            <time className="text-sm text-slate-500" dateTime={event.date}>
-              {formattedDate}
-            </time>
+            <time
+  className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600"
+  dateTime={event.date}
+>
+  {formattedDate}
+</time>
           </div>
 
           <h2 className="text-xl font-semibold text-slate-950 transition group-hover:text-blue-600">
