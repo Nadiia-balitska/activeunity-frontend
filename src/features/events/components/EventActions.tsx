@@ -11,14 +11,29 @@ interface EventActionsProps {
   event: Event;
 }
 
+type AuthUserLike = {
+  id?: string;
+  _id?: string;
+  name?: string;
+  email?: string;
+};
+
+function getEventId(event: Event) {
+  return event.id || event._id || "";
+}
+
+function getUserId(user: AuthUserLike | null | undefined) {
+  return user?.id || user?._id || "";
+}
+
 function getParticipantId(participant: EventParticipant | string | undefined) {
-  if (!participant) return null;
+  if (!participant) return "";
 
   if (typeof participant === "string") {
     return participant;
   }
 
-  return participant._id;
+  return participant.id || participant._id || "";
 }
 
 export function EventActions({ event }: EventActionsProps) {
@@ -28,12 +43,13 @@ export function EventActions({ event }: EventActionsProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const participants = currentEvent.participants ?? [];
-  const userId = user?.id;
+  const eventId = getEventId(currentEvent);
+  const userId = getUserId(user);
 
-  const isJoined = Boolean(
-    userId &&
-      participants.some((participant) => getParticipantId(participant) === userId)
+  const participants = currentEvent.participants ?? [];
+
+  const isJoined = participants.some(
+    (participant) => getParticipantId(participant) === userId
   );
 
   const isFull =
@@ -41,15 +57,28 @@ export function EventActions({ event }: EventActionsProps) {
     participants.length >= currentEvent.maxParticipants;
 
   const handleJoin = async () => {
-    if (!userId || isJoined) return;
+    if (!eventId) {
+      setError("Event id is missing.");
+      return;
+    }
+
+    if (!userId) {
+      setError("User id is missing. Please log in again.");
+      return;
+    }
+
+    if (isJoined) return;
 
     try {
       setIsLoading(true);
       setError("");
 
-      const updatedEvent = await eventService.joinEvent(currentEvent._id);
+      await eventService.joinEvent(eventId);
 
-      setCurrentEvent(updatedEvent);
+      setCurrentEvent((prevEvent) => ({
+        ...prevEvent,
+        participants: [...(prevEvent.participants ?? []), userId],
+      }));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.response?.data?.message || "Failed to join event.");
@@ -62,15 +91,30 @@ export function EventActions({ event }: EventActionsProps) {
   };
 
   const handleLeave = async () => {
-    if (!userId || !isJoined) return;
+    if (!eventId) {
+      setError("Event id is missing.");
+      return;
+    }
+
+    if (!userId) {
+      setError("User id is missing. Please log in again.");
+      return;
+    }
+
+    if (!isJoined) return;
 
     try {
       setIsLoading(true);
       setError("");
 
-      const updatedEvent = await eventService.leaveEvent(currentEvent._id);
+      await eventService.leaveEvent(eventId);
 
-      setCurrentEvent(updatedEvent);
+      setCurrentEvent((prevEvent) => ({
+        ...prevEvent,
+        participants: (prevEvent.participants ?? []).filter(
+          (participant) => getParticipantId(participant) !== userId
+        ),
+      }));
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.response?.data?.message || "Failed to leave event.");
