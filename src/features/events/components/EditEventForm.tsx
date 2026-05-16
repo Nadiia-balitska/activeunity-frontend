@@ -10,8 +10,19 @@ interface EditEventFormProps {
   event: Event;
 }
 
+type FormErrors = Partial<Record<keyof UpdateEventData, string>>;
+
 function formatDateForInput(date: string) {
   return new Date(date).toISOString().slice(0, 16);
+}
+
+function isValidUrl(value: string) {
+  try {
+    new URL(value);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function EditEventForm({ event }: EditEventFormProps) {
@@ -30,8 +41,9 @@ export function EditEventForm({ event }: EditEventFormProps) {
     status: event.status || "upcoming",
   });
 
+  const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [submitError, setSubmitError] = useState("");
 
   const inputClassName =
     "mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-60";
@@ -40,6 +52,47 @@ export function EditEventForm({ event }: EditEventFormProps) {
     "mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-60";
 
   const labelClassName = "text-sm font-medium text-slate-300";
+  const errorClassName = "mt-2 text-xs text-red-300";
+
+  const validateForm = () => {
+    const newErrors: FormErrors = {};
+
+    if (!formData.title || formData.title.trim().length < 3) {
+      newErrors.title = "Title must be at least 3 characters.";
+    }
+
+    if (!formData.description || formData.description.trim().length < 10) {
+      newErrors.description = "Description must be at least 10 characters.";
+    }
+
+    if (!formData.date) {
+      newErrors.date = "Date and time are required.";
+    }
+
+    if (!formData.location || formData.location.trim().length < 2) {
+      newErrors.location = "Location is required.";
+    }
+
+    if (!formData.category) {
+      newErrors.category = "Please select a category.";
+    }
+
+    if (!formData.maxParticipants || formData.maxParticipants < 1) {
+      newErrors.maxParticipants = "Max participants must be at least 1.";
+    }
+
+    if (formData.image && !isValidUrl(formData.image)) {
+      newErrors.image = "Image must be a valid URL.";
+    }
+
+    if (!formData.status) {
+      newErrors.status = "Please select a status.";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (
     event: React.ChangeEvent<
@@ -52,25 +105,32 @@ export function EditEventForm({ event }: EditEventFormProps) {
       ...prevData,
       [name]: name === "maxParticipants" ? Number(value) : value,
     }));
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: undefined,
+    }));
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!eventId) {
-      setError("Event id is missing.");
+      setSubmitError("Event id is missing.");
       return;
     }
 
+    if (!validateForm()) return;
+
     try {
       setIsLoading(true);
-      setError("");
+      setSubmitError("");
 
       const updatedEvent = await eventService.updateEvent(eventId, formData);
 
       router.push(`/events/${updatedEvent.id || updatedEvent._id}`);
     } catch {
-      setError("Failed to update event. Please try again.");
+      setSubmitError("Failed to update event. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -79,11 +139,12 @@ export function EditEventForm({ event }: EditEventFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
+      noValidate
       className="rounded-3xl border border-slate-800 bg-slate-900 p-8 shadow-2xl shadow-black/20"
     >
-      {error && (
+      {submitError && (
         <p className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-          {error}
+          {submitError}
         </p>
       )}
 
@@ -94,11 +155,11 @@ export function EditEventForm({ event }: EditEventFormProps) {
             name="title"
             value={formData.title || ""}
             onChange={handleChange}
-            required
             disabled={isLoading}
             className={inputClassName}
             placeholder="Community meetup"
           />
+          {errors.title && <p className={errorClassName}>{errors.title}</p>}
         </div>
 
         <div>
@@ -107,12 +168,14 @@ export function EditEventForm({ event }: EditEventFormProps) {
             name="description"
             value={formData.description || ""}
             onChange={handleChange}
-            required
             rows={5}
             disabled={isLoading}
             className={inputClassName}
             placeholder="Describe your event..."
           />
+          {errors.description && (
+            <p className={errorClassName}>{errors.description}</p>
+          )}
         </div>
 
         <div className="grid gap-5 md:grid-cols-2">
@@ -123,10 +186,10 @@ export function EditEventForm({ event }: EditEventFormProps) {
               name="date"
               value={formData.date || ""}
               onChange={handleChange}
-              required
               disabled={isLoading}
               className={inputClassName}
             />
+            {errors.date && <p className={errorClassName}>{errors.date}</p>}
           </div>
 
           <div>
@@ -135,11 +198,13 @@ export function EditEventForm({ event }: EditEventFormProps) {
               name="location"
               value={formData.location || ""}
               onChange={handleChange}
-              required
               disabled={isLoading}
               className={inputClassName}
               placeholder="Write the event location or address"
             />
+            {errors.location && (
+              <p className={errorClassName}>{errors.location}</p>
+            )}
           </div>
         </div>
 
@@ -150,7 +215,6 @@ export function EditEventForm({ event }: EditEventFormProps) {
               name="category"
               value={formData.category || ""}
               onChange={handleChange}
-              required
               disabled={isLoading}
               className={selectClassName}
             >
@@ -162,6 +226,9 @@ export function EditEventForm({ event }: EditEventFormProps) {
               <option value="volunteering">Volunteering</option>
               <option value="other">Other</option>
             </select>
+            {errors.category && (
+              <p className={errorClassName}>{errors.category}</p>
+            )}
           </div>
 
           <div>
@@ -170,7 +237,6 @@ export function EditEventForm({ event }: EditEventFormProps) {
               name="status"
               value={formData.status || "upcoming"}
               onChange={handleChange}
-              required
               disabled={isLoading}
               className={selectClassName}
             >
@@ -178,6 +244,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
               <option value="completed">Completed</option>
               <option value="cancelled">Cancelled</option>
             </select>
+            {errors.status && <p className={errorClassName}>{errors.status}</p>}
           </div>
         </div>
 
@@ -189,10 +256,12 @@ export function EditEventForm({ event }: EditEventFormProps) {
             value={formData.maxParticipants || 1}
             onChange={handleChange}
             min={1}
-            required
             disabled={isLoading}
             className={inputClassName}
           />
+          {errors.maxParticipants && (
+            <p className={errorClassName}>{errors.maxParticipants}</p>
+          )}
         </div>
 
         <div>
@@ -211,9 +280,11 @@ export function EditEventForm({ event }: EditEventFormProps) {
           <p className="mt-2 text-xs text-slate-500">
             Paste a public image URL for your event cover.
           </p>
+
+          {errors.image && <p className={errorClassName}>{errors.image}</p>}
         </div>
 
-        {formData.image && (
+        {formData.image && !errors.image && (
           <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-950">
             <img
               src={formData.image}
@@ -233,4 +304,4 @@ export function EditEventForm({ event }: EditEventFormProps) {
       </button>
     </form>
   );
-} 
+}
