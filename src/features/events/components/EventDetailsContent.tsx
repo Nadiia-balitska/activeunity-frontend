@@ -6,6 +6,8 @@ import { ArrowLeft } from "lucide-react";
 
 import type { Event } from "@/types/event";
 import { EventActions } from "@/features/events/components/EventActions";
+import { EventOwnerActions } from "@/features/events/components/EventOwnerActions";
+import { useAuthStore } from "@/store/authStore";
 
 interface EventDetailsContentProps {
   event: Event;
@@ -14,7 +16,16 @@ interface EventDetailsContentProps {
 export function EventDetailsContent({ event }: EventDetailsContentProps) {
   const [currentEvent, setCurrentEvent] = useState<Event>(event);
 
+  const user = useAuthStore((state) => state.user);
+
   const participantsCount = currentEvent.participants?.length ?? 0;
+
+  const eventId = currentEvent.id || currentEvent._id || "";
+  const organizerId =
+    currentEvent.organizer?.id || currentEvent.organizer?._id || "";
+  const userId = user?.id || user?._id;
+
+  const isMyEvent = Boolean(userId && organizerId === userId);
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -44,9 +55,17 @@ export function EventDetailsContent({ event }: EventDetailsContentProps) {
 
           <div className="p-8 md:p-10">
             <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-              <span className="rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-1.5 text-sm font-medium text-blue-300">
-                {currentEvent.category}
-              </span>
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-1.5 text-sm font-medium text-blue-300">
+                  {currentEvent.category}
+                </span>
+
+                {isMyEvent && (
+                  <span className="rounded-full border border-violet-500/20 bg-violet-500/10 px-4 py-1.5 text-sm font-semibold text-violet-300">
+                    My event
+                  </span>
+                )}
+              </div>
 
               <div className="rounded-2xl border border-blue-500/30 bg-blue-500/10 px-5 py-4 shadow-sm">
                 <p className="text-xs font-semibold uppercase tracking-wide text-blue-300">
@@ -106,6 +125,8 @@ export function EventDetailsContent({ event }: EventDetailsContentProps) {
             </dl>
 
             <EventActions event={currentEvent} onEventChange={setCurrentEvent} />
+
+            {isMyEvent && eventId && <EventOwnerActions eventId={eventId} />}
           </div>
         </article>
       </section>

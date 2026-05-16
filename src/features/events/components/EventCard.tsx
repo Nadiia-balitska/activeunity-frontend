@@ -20,8 +20,9 @@ export function EventCard({ event }: EventCardProps) {
 
   const eventId = getEventId(event);
   const organizerId = getOrganizerId(event);
+  const userId = user?.id || user?._id;
 
-  const isMyEvent = Boolean(user?.id && organizerId === user.id);
+  const isMyEvent = Boolean(userId && organizerId === userId);
 
   const participantsCount = event.participants?.length ?? 0;
 
@@ -83,15 +84,11 @@ export function EventCard({ event }: EventCardProps) {
 
           <div className="mt-auto pt-6">
             <div className="space-y-2">
-              <p className="text-sm text-slate-400">
-                📍 {event.location}
-              </p>
+              <p className="text-sm text-slate-400">📍 {event.location}</p>
 
               <p className="text-sm text-slate-400">
                 👥 {participantsCount}
-                {event.maxParticipants
-                  ? ` / ${event.maxParticipants}`
-                  : ""}{" "}
+                {event.maxParticipants ? ` / ${event.maxParticipants}` : ""}{" "}
                 participants
               </p>
             </div>

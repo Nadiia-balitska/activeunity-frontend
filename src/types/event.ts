@@ -51,8 +51,8 @@ export interface UpdateEventData {
   location?: string;
   category?: string;
   image?: string;
-  status?: string;
   maxParticipants?: number;
+  status?: string;
 }
 
 export interface EventsResponse {
