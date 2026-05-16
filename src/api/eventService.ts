@@ -1,12 +1,12 @@
 import { apiClient } from "@/api/apiClient";
 
 import type {
+  CreateEventData,
   Event,
   EventResponse,
   EventsResponse,
   ParticipantsResponse,
 } from "@/types/event";
-
 
 export const eventService = {
   getEvents: async (): Promise<Event[]> => {
@@ -19,19 +19,24 @@ export const eventService = {
     return response.data.event;
   },
 
+  createEvent: async (data: CreateEventData): Promise<Event> => {
+    const response = await apiClient.post<EventResponse>("/events", data);
+    return response.data.event;
+  },
+
   joinEvent: async (id: string): Promise<Event> => {
     const response = await apiClient.post<EventResponse>(`/events/${id}/join`);
     return response.data.event;
   },
 
-leaveEvent: async (id: string): Promise<Event> => {
-  const response = await apiClient.delete<EventResponse>(`/events/${id}/leave`);
-  return response.data.event;
-},
+  leaveEvent: async (id: string): Promise<Event> => {
+    const response = await apiClient.delete<EventResponse>(
+      `/events/${id}/leave`
+    );
+    return response.data.event;
+  },
 
-  getEventParticipants: async (
-    id: string
-  ): Promise<ParticipantsResponse> => {
+  getEventParticipants: async (id: string): Promise<ParticipantsResponse> => {
     const response = await apiClient.get<ParticipantsResponse>(
       `/events/${id}/participants`
     );

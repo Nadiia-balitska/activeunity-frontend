@@ -1,17 +1,19 @@
 export interface EventParticipant {
-  _id: string;
+  id: string;
   name: string;
   email: string;
 }
 
 export interface EventOrganizer {
-  _id: string;
+  id: string;
   name: string;
   email: string;
 }
 
 export interface Event {
-  _id: string;
+  id?: string;
+  _id?: string;
+
   title: string;
   description: string;
   date: string;
@@ -27,6 +29,17 @@ export interface Event {
 
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface CreateEventData {
+  title: string;
+  description: string;
+  date: string;
+  location: string;
+  category: string;
+
+  image?: string;
+  maxParticipants?: number;
 }
 
 export interface EventsResponse {
