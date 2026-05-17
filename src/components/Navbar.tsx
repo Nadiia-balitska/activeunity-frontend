@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { useAuthStore } from "@/store/authStore";
 
@@ -8,6 +9,8 @@ export function Navbar() {
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const logout = useAuthStore((state) => state.logout);
+
+  const router = useRouter();
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/90 backdrop-blur">
@@ -36,9 +39,13 @@ export function Navbar() {
   {user?.name}
 </Link>
 
-              <button
-                onClick={logout}
-                className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:border-red-500 hover:bg-red-500/10 hover:text-red-400"
+             <button
+  onClick={() => {
+    logout();
+    router.push("/");
+    router.refresh();
+  }}
+   className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:border-red-500 hover:bg-red-500/10 hover:text-red-400"
               >
                 Logout
               </button>
