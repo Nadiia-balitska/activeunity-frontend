@@ -10,11 +10,11 @@ export interface LoginData {
 }
 
 export interface AuthUser {
-  _id: string;
   id: string;
   name: string;
   email: string;
   role: "user" | "admin";
+  avatar?: string;
 }
 
 export interface AuthResponse {

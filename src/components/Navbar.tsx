@@ -29,9 +29,12 @@ export function Navbar() {
 
           {isAuthenticated ? (
             <div className="flex items-center gap-4">
-              <span className="text-sm font-medium text-slate-300">
-                {user?.name}
-              </span>
+              <Link
+  href="/profile"
+  className="text-sm font-medium text-slate-300 transition hover:text-blue-400"
+>
+  {user?.name}
+</Link>
 
               <button
                 onClick={logout}

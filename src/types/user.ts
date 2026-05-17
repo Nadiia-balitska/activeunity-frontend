@@ -16,4 +16,12 @@ export interface UserProfileResponse {
   joinedEvents: Event[];
 }
 
+export interface UpdateProfileData {
+  name?: string;
+  avatar?: string;
+}
 
+export interface UpdateProfileResponse {
+  success: boolean;
+  user: ProfileUser;
+}

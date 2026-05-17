@@ -21,11 +21,22 @@ export function EventDetailsContent({ event }: EventDetailsContentProps) {
   const participantsCount = currentEvent.participants?.length ?? 0;
 
   const eventId = currentEvent.id || currentEvent._id || "";
-  const organizerId =
-    currentEvent.organizer?.id || currentEvent.organizer?._id || "";
-  const userId = user?.id || user?._id;
+
+const organizerId = getOrganizerId(currentEvent.organizer);
+  
+const userId = user?.id || user?._id;
 
   const isMyEvent = Boolean(userId && organizerId === userId);
+
+  function getOrganizerId(organizer: Event["organizer"]) {
+  if (!organizer) return "";
+
+  if (typeof organizer === "string") {
+    return organizer;
+  }
+
+  return organizer.id || organizer._id || "";
+}
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">

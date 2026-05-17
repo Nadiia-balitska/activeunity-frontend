@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import { userService } from "@/api/userService";
 import { EventCard } from "@/features/events/components/EventCard";
+import { EditProfileModal } from "@/features/profile/components/EditProfileModal";
 import type { UserProfileResponse } from "@/types/user";
 
 export default function ProfilePage() {
@@ -55,6 +56,18 @@ export default function ProfilePage() {
       <section className="container py-16">
         <div className="mb-10 rounded-3xl border border-slate-800 bg-slate-900 p-8 shadow-2xl shadow-black/20">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            
+            <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 text-3xl font-bold text-blue-300">
+  {user.avatar ? (
+    <img
+      src={user.avatar}
+      alt={user.name}
+      className="h-full w-full object-cover"
+    />
+  ) : (
+    user.name.charAt(0).toUpperCase()
+  )}
+</div>
             <div>
               <p className="mb-4 inline-flex rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-300">
                 My profile
@@ -70,12 +83,33 @@ export default function ProfilePage() {
               </p>
             </div>
 
-            <Link
-              href="/events/create"
-              className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-500"
-            >
-              Create event
-            </Link>
+         <div className="flex flex-wrap gap-3">
+<EditProfileModal
+  initialName={user.name}
+  initialAvatar={user.avatar || ""}
+  onProfileUpdated={(updatedData) => {
+    setProfile((prevProfile) => {
+      if (!prevProfile) return prevProfile;
+
+      return {
+        ...prevProfile,
+        user: {
+          ...prevProfile.user,
+          name: updatedData.name,
+          avatar: updatedData.avatar || "",
+        },
+      };
+    });
+  }}
+/>
+
+  <Link
+    href="/events/create"
+    className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-500"
+  >
+    Create event
+  </Link>
+</div>
           </div>
 
           <div className="mt-8 grid gap-4 md:grid-cols-2">
@@ -95,10 +129,13 @@ export default function ProfilePage() {
           </div>
         </div>
 
+
+
         <section className="mb-14">
           <h2 className="mb-5 text-2xl font-bold text-white">
             My created events
           </h2>
+          
 
           {createdEvents.length > 0 ? (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
