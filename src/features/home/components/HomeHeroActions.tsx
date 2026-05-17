@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useAuthStore } from "@/store/authStore";
 
 export function HomeHeroActions() {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
 
   return (
     <div className="mt-10 mb-10 flex flex-wrap gap-4">
@@ -15,7 +15,7 @@ export function HomeHeroActions() {
         Browse events
       </Link>
 
-      {isAuthenticated ? (
+      {user ? (
         <Link
           href="/profile"
           className="rounded-xl border border-slate-700 bg-slate-900 px-6 py-3 text-sm font-semibold text-slate-200 transition hover:border-blue-500 hover:text-white"

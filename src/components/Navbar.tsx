@@ -24,6 +24,12 @@ export function Navbar() {
 
         <div className="flex items-center gap-6">
           <Link
+            href="/"
+            className="text-sm font-medium text-slate-300 transition hover:text-blue-400"
+          >
+            Home
+          </Link>
+          <Link
             href="/events"
             className="text-sm font-medium text-slate-300 transition hover:text-blue-400"
           >
@@ -40,15 +46,14 @@ export function Navbar() {
               </Link>
 
               <button
-                onClick={() => {
-                  logout();
-                  router.push("/");
-                  router.refresh();
-                }}
-                className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:border-red-500 hover:bg-red-500/10 hover:text-red-400"
-              >
-                Logout
-              </button>
+  onClick={() => {
+    logout();
+    window.location.href = "/";
+  }}
+  className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:border-red-500 hover:bg-red-500/10 hover:text-red-400"
+>
+  Logout
+</button>
             </div>
           ) : (
             <div className="flex items-center gap-3">

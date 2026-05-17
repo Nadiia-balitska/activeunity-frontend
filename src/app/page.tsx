@@ -1,3 +1,4 @@
+import { HomeHeroActions } from "@/features/home/components/HomeHeroActions";
 import Link from "next/link";
 
 export default function HomePage() {
@@ -18,21 +19,7 @@ export default function HomePage() {
           easy-to-use platform.
         </p>
 
-        <div className="mt-10 flex flex-wrap gap-4">
-          <Link
-            href="/events"
-            className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-500"
-          >
-            Browse events
-          </Link>
-
-          <Link
-            href="/profile"
-            className="rounded-xl border border-slate-700 bg-slate-900 px-6 py-3 text-sm font-semibold text-slate-200 transition hover:border-blue-500 hover:text-white"
-          >
-            View profile
-          </Link>
-        </div>
+       <HomeHeroActions />
 
         <div className="mt-16 grid gap-6 md:grid-cols-3">
           <div className="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-xl">
