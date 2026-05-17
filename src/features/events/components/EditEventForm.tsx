@@ -97,7 +97,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
   const handleChange = (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = event.target;
 

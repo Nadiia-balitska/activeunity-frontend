@@ -84,7 +84,7 @@ export function CreateEventForm() {
   const handleChange = (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = event.target;
 

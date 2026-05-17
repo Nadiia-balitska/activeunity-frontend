@@ -22,21 +22,21 @@ export function EventDetailsContent({ event }: EventDetailsContentProps) {
 
   const eventId = currentEvent.id || currentEvent._id || "";
 
-const organizerId = getOrganizerId(currentEvent.organizer);
-  
-const userId = user?.id;
+  const organizerId = getOrganizerId(currentEvent.organizer);
+
+  const userId = user?.id;
 
   const isMyEvent = Boolean(userId && organizerId === userId);
 
   function getOrganizerId(organizer: Event["organizer"]) {
-  if (!organizer) return "";
+    if (!organizer) return "";
 
-  if (typeof organizer === "string") {
-    return organizer;
+    if (typeof organizer === "string") {
+      return organizer;
+    }
+
+    return organizer.id || organizer._id || "";
   }
-
-  return organizer.id || organizer._id || "";
-}
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -110,9 +110,7 @@ const userId = user?.id;
             <dl className="mt-10 grid gap-6 border-t border-slate-800 pt-8 md:grid-cols-3">
               <div>
                 <dt className="text-sm font-semibold text-white">Location</dt>
-                <dd className="mt-2 text-slate-400">
-                  {currentEvent.location}
-                </dd>
+                <dd className="mt-2 text-slate-400">{currentEvent.location}</dd>
               </div>
 
               <div>
@@ -135,20 +133,23 @@ const userId = user?.id;
               </div>
             </dl>
 
-            <EventActions event={currentEvent} onEventChange={setCurrentEvent} />
+            <EventActions
+              event={currentEvent}
+              onEventChange={setCurrentEvent}
+            />
 
-          {isMyEvent && eventId && (
-  <EventOwnerActions
-    eventId={eventId}
-    currentStatus={currentEvent.status}
-    onStatusChange={(status) =>
-      setCurrentEvent((prevEvent) => ({
-        ...prevEvent,
-        status,
-      }))
-    }
-  />
-)}
+            {isMyEvent && eventId && (
+              <EventOwnerActions
+                eventId={eventId}
+                currentStatus={currentEvent.status}
+                onStatusChange={(status) =>
+                  setCurrentEvent((prevEvent) => ({
+                    ...prevEvent,
+                    status,
+                  }))
+                }
+              />
+            )}
           </div>
         </article>
       </section>

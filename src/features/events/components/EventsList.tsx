@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
+import { useAuthStore } from "@/store/authStore";
 import { eventService } from "@/api/eventService";
 import { EventCard } from "@/features/events/components/EventCard";
 import type { Event, EventFilters } from "@/types/event";
@@ -21,6 +21,7 @@ export function EventsList() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   useEffect(() => {
     const loadEvents = async () => {
       try {
@@ -47,7 +48,7 @@ export function EventsList() {
   }, [filters, page]);
 
   const handleFilterChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = event.target;
 
@@ -88,12 +89,14 @@ export function EventsList() {
             </p>
           </div>
 
-          <Link
-            href="/events/create"
-            className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-500"
-          >
-            Create event
-          </Link>
+          {isAuthenticated && (
+            <Link
+              href="/events/create"
+              className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-500"
+            >
+              Create event
+            </Link>
+          )}
         </div>
 
         <div className="mb-8 rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-xl shadow-black/10">

@@ -74,26 +74,26 @@ export function EventOwnerActions({
         </p>
 
         <div className="flex flex-wrap gap-4">
-{isInactive ? (
-  <>
-    <button
-      type="button"
-      onClick={() => handleStatusUpdate("upcoming")}
-      disabled={isUpdatingStatus}
-      className="rounded-xl border border-slate-600 bg-slate-900 px-5 py-3 text-sm font-semibold text-slate-200 transition hover:border-blue-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
-    >
-      Reopen event
-    </button>
+          {isInactive ? (
+            <>
+              <button
+                type="button"
+                onClick={() => handleStatusUpdate("upcoming")}
+                disabled={isUpdatingStatus}
+                className="rounded-xl border border-slate-600 bg-slate-900 px-5 py-3 text-sm font-semibold text-slate-200 transition hover:border-blue-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Reopen event
+              </button>
 
-    <button
-      type="button"
-      onClick={() => setIsModalOpen(true)}
-      className="rounded-xl border border-red-500/30 bg-red-500/10 px-5 py-3 text-sm font-semibold text-red-300 transition hover:bg-red-500/20"
-    >
-      Delete event
-    </button>
-  </>
-) : (
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(true)}
+                className="rounded-xl border border-red-500/30 bg-red-500/10 px-5 py-3 text-sm font-semibold text-red-300 transition hover:bg-red-500/20"
+              >
+                Delete event
+              </button>
+            </>
+          ) : (
             <>
               <Link
                 href={`/events/${eventId}/edit`}

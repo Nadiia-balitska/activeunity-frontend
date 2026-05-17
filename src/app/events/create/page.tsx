@@ -1,9 +1,27 @@
+"use client";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/authStore";
 
 import { CreateEventForm } from "@/features/events/components/CreateEventForm";
 
 export default function CreateEventPage() {
+  const router = useRouter();
+
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login");
+    }
+  }, [isAuthenticated, router]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
   return (
     <main className="min-h-screen bg-slate-950 text-white">
       <section className="mx-auto max-w-3xl px-4 py-10">

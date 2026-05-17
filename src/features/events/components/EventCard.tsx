@@ -26,7 +26,7 @@ export function EventCard({ event }: EventCardProps) {
 
   const eventId = getEventId(event);
   const organizerId = getOrganizerId(event);
-const userId = user?.id;
+  const userId = user?.id;
 
   const isMyEvent = Boolean(userId && organizerId === userId);
 
@@ -94,7 +94,9 @@ const userId = user?.id;
 
               <p className="text-sm text-slate-400">
                 👥 {participantsCount}
-                {event.maxParticipants ? ` / ${event.maxParticipants}` : ""}{" "}
+                {event.maxParticipants
+                  ? ` / ${event.maxParticipants}`
+                  : ""}{" "}
                 participants
               </p>
             </div>

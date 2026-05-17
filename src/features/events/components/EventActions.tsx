@@ -48,7 +48,7 @@ export function EventActions({ event, onEventChange }: EventActionsProps) {
   const participants = event.participants ?? [];
 
   const isJoined = participants.some(
-    (participant) => getParticipantId(participant) === userId
+    (participant) => getParticipantId(participant) === userId,
   );
 
   const isFull =
@@ -111,7 +111,7 @@ export function EventActions({ event, onEventChange }: EventActionsProps) {
       onEventChange({
         ...event,
         participants: participants.filter(
-          (participant) => getParticipantId(participant) !== userId
+          (participant) => getParticipantId(participant) !== userId,
         ),
       });
     } catch (error) {
@@ -150,14 +150,14 @@ export function EventActions({ event, onEventChange }: EventActionsProps) {
       )}
 
       {isJoined ? (
-       <button
-  type="button"
-  onClick={handleLeave}
-  disabled={isLoading}
-  className="mt-4 rounded-xl bg-blue-950 px-5 py-3 text-sm font-medium text-blue-200 transition hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-60"
->
-  {isLoading ? "Leaving..." : "Leave event"}
-</button>
+        <button
+          type="button"
+          onClick={handleLeave}
+          disabled={isLoading}
+          className="mt-4 rounded-xl bg-blue-950 px-5 py-3 text-sm font-medium text-blue-200 transition hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {isLoading ? "Leaving..." : "Leave event"}
+        </button>
       ) : (
         <button
           type="button"
