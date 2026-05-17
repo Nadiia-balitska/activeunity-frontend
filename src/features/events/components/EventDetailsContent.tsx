@@ -24,7 +24,7 @@ export function EventDetailsContent({ event }: EventDetailsContentProps) {
 
 const organizerId = getOrganizerId(currentEvent.organizer);
   
-const userId = user?.id || user?._id;
+const userId = user?.id;
 
   const isMyEvent = Boolean(userId && organizerId === userId);
 
