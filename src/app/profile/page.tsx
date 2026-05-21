@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 import { userService } from "@/api/userService";
 import { EventCard } from "@/features/events/components/EventCard";
 import { EditProfileModal } from "@/features/profile/components/EditProfileModal";
+import { ProfileSkeleton } from "@/features/profile/components/ProfileSkeleton";
+
 import type { UserProfileResponse } from "@/types/user";
 
 export default function ProfilePage() {
@@ -28,13 +30,15 @@ export default function ProfilePage() {
     loadProfile();
   }, []);
 
-  if (isLoading) {
-    return (
-      <main className="min-h-screen bg-slate-950 px-4 py-16 text-white">
-        <p className="text-slate-300">Loading profile...</p>
-      </main>
-    );
-  }
+ if (isLoading) {
+  return (
+    <main className="min-h-screen bg-slate-950 px-4 py-16 text-white">
+      <section className="container">
+        <ProfileSkeleton />
+      </section>
+    </main>
+  );
+}
 
   if (!profile) {
     return (
@@ -140,9 +144,26 @@ export default function ProfilePage() {
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8 text-center text-slate-400">
-              You have not created any events yet.
-            </div>
+           <div className="rounded-3xl border border-slate-800 bg-slate-900 p-10 text-center">
+  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-500/10 text-2xl">
+    🎉
+  </div>
+
+  <h3 className="mt-5 text-xl font-semibold text-white">
+    No created events yet
+  </h3>
+
+  <p className="mt-3 text-sm text-slate-400">
+    Start building your community by creating your first event.
+  </p>
+
+  <Link
+    href="/events/create"
+    className="mt-6 inline-flex rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-500"
+  >
+    Create first event
+  </Link>
+</div>
           )}
         </section>
 
@@ -156,9 +177,26 @@ export default function ProfilePage() {
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8 text-center text-slate-400">
-              You have not joined any events yet.
-            </div>
+            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-10 text-center">
+  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-500/10 text-2xl">
+    🚀
+  </div>
+
+  <h3 className="mt-5 text-xl font-semibold text-white">
+    No joined events
+  </h3>
+
+  <p className="mt-3 text-sm text-slate-400">
+    Explore community activities and join interesting events.
+  </p>
+
+  <Link
+    href="/events"
+    className="mt-6 inline-flex rounded-xl border border-slate-700 bg-slate-950 px-5 py-3 text-sm font-semibold text-slate-200 transition hover:border-blue-500 hover:text-white"
+  >
+    Browse events
+  </Link>
+</div>
           )}
         </section>
       </section>

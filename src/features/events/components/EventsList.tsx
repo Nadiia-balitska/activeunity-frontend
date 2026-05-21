@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/authStore";
 import { eventService } from "@/api/eventService";
 import { EventCard } from "@/features/events/components/EventCard";
+import { EventCardSkeleton } from "@/features/events/components/EventCardSkeleton";
+
 import type { Event, EventFilters } from "@/types/event";
 
 export function EventsList() {
@@ -150,8 +152,13 @@ export function EventsList() {
           </div>
         </div>
 
-        {isLoading && <p className="text-slate-300">Loading events...</p>}
-
+        {isLoading && (
+  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    {Array.from({ length: 6 }).map((_, index) => (
+      <EventCardSkeleton key={index} />
+    ))}
+  </div>
+)}
         {!isLoading && events.length === 0 && (
           <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8 text-center shadow-xl">
             <h2 className="text-lg font-semibold text-white">
