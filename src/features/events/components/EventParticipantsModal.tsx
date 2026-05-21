@@ -11,6 +11,14 @@ interface EventParticipantsModalProps {
   participantsCount: number;
 }
 
+function getParticipantId(participant: EventParticipant) {
+  return participant.id || participant._id || participant.email;
+}
+
+function getInitial(name: string) {
+  return name.trim().charAt(0).toUpperCase();
+}
+
 export function EventParticipantsModal({
   eventId,
   participantsCount,
@@ -47,8 +55,8 @@ export function EventParticipantsModal({
       <button
         type="button"
         onClick={loadParticipants}
-        disabled={isLoading || !eventId}
-        className="mt-4 rounded-xl border border-blue-500/30 bg-blue-500/10 px-5 py-3 text-sm font-semibold text-blue-300 transition hover:bg-blue-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+        disabled={isLoading || !eventId || participantsCount === 0}
+        className="mt-4 rounded-xl border border-blue-500/30 bg-blue-500/10 px-5 py-3 text-sm font-semibold text-blue-300 transition hover:bg-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isLoading ? "Loading..." : `View participants (${participantsCount})`}
       </button>
@@ -86,19 +94,27 @@ export function EventParticipantsModal({
               <div className="max-h-96 space-y-3 overflow-y-auto pr-1">
                 {participants.map((participant) => (
                   <div
-                    key={participant.id || participant._id}
+                    key={getParticipantId(participant)}
                     className="flex items-center gap-4 rounded-2xl border border-slate-800 bg-slate-950 p-4"
                   >
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-sm font-bold text-blue-300">
-                      {participant.name.charAt(0).toUpperCase()}
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-blue-500/20 bg-blue-500/10 text-sm font-bold text-blue-300">
+                      {participant.avatar ? (
+                        <img
+                          src={participant.avatar}
+                          alt={participant.name}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        getInitial(participant.name)
+                      )}
                     </div>
 
-                    <div>
-                      <p className="font-semibold text-white">
+                    <div className="min-w-0">
+                      <p className="truncate font-semibold text-white">
                         {participant.name}
                       </p>
 
-                      <p className="text-sm text-slate-400">
+                      <p className="truncate text-sm text-slate-400">
                         {participant.email}
                       </p>
                     </div>

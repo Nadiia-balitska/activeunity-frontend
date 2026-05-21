@@ -1,19 +1,3 @@
-export interface EventParticipant {
-  id?: string;
-  _id?: string;
-  name: string;
-  email: string;
-}
-
-export interface EventOrganizer {
-  id?: string;
-  _id?: string;
-  name: string;
-  email: string;
-}
-
-export type EventParticipantValue = EventParticipant | string;
-
 export interface Event {
   id?: string;
   _id?: string;
@@ -85,3 +69,21 @@ export interface EventFilters {
   category?: string;
   status?: string;
 }
+
+export interface EventParticipant {
+  id?: string;
+  _id?: string;
+  name: string;
+  email: string;
+  avatar?: string;
+}
+
+export interface EventOrganizer {
+  id?: string;
+  _id?: string;
+  name: string;
+  email: string;
+  avatar?: string;
+}
+
+export type EventParticipantValue = EventParticipant | string;
