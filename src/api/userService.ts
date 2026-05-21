@@ -22,4 +22,11 @@ export const userService = {
 
     return response.data;
   },
+
+  getUserById: async (id: string): Promise<UserProfileResponse> => {
+  const response = await apiClient.get<UserProfileResponse>(`/users/${id}`);
+  return response.data;
+},
 };
+
+

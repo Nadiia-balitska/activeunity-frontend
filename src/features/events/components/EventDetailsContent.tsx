@@ -109,8 +109,12 @@ const userId =
               {currentEvent.description}
             </p>
             
-            <div className="mt-8 flex items-center gap-4 rounded-2xl border border-slate-800 bg-slate-950 p-5">
-  <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border border-blue-500/20 bg-blue-500/10 text-lg font-bold text-blue-300">
+            <Link
+  href={`/users/${organizerId}`}
+  className="mt-8 flex items-center gap-4 rounded-2xl border border-slate-800 bg-slate-950 p-5 transition hover:border-blue-500"
+>
+  
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border border-blue-500/20 bg-blue-500/10 text-lg font-bold text-blue-300">
     {currentEvent.organizer &&
     typeof currentEvent.organizer !== "string" &&
     currentEvent.organizer.avatar ? (
@@ -125,9 +129,9 @@ const userId =
     ) : (
       "O"
     )}
-  </div>
+           </div>
 
-  <div className="min-w-0">
+           <div className="min-w-0">
     <div className="mb-1 flex items-center gap-2">
       <p className="font-semibold text-white">
         {currentEvent.organizer &&
@@ -147,8 +151,9 @@ const userId =
           {currentEvent.organizer.email}
         </p>
       )}
-  </div>
-</div>
+           </div>
+
+           </Link>
 
             <dl className="mt-10 grid gap-6 border-t border-slate-800 pt-8 md:grid-cols-3">
               <div>

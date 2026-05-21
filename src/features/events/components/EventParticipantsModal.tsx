@@ -3,6 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 import { eventService } from "@/api/eventService";
 import type { EventParticipant } from "@/types/event";
@@ -86,10 +87,12 @@ export function EventParticipantsModal({
             {participants.length > 0 ? (
               <div className="max-h-96 space-y-3 overflow-y-auto pr-1">
                 {participants.map((participant) => (
-                  <div
-                    key={getParticipantId(participant)}
-                    className="flex items-center gap-4 rounded-2xl border border-slate-800 bg-slate-950 p-4"
-                  >
+                  <Link
+  key={getParticipantId(participant)}
+  href={`/users/${getParticipantId(participant)}`}
+  onClick={() => setIsOpen(false)}
+  className="flex items-center gap-4 rounded-2xl border border-slate-800 bg-slate-950 p-4 transition hover:border-blue-500"
+>
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-full border border-blue-500/20 bg-blue-500/10 text-sm font-bold text-blue-300">
                       {participant.avatar ? (
                         <img
@@ -111,7 +114,7 @@ export function EventParticipantsModal({
                         {participant.email}
                       </p>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             ) : (
