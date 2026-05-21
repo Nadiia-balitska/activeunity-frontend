@@ -7,13 +7,17 @@ export interface ProfileUser {
   role: "user" | "admin";
   avatar?: string;
   createdAt?: string;
+
+  favoriteEvents?: string[];
 }
 
 export interface UserProfileResponse {
   success: boolean;
   user: ProfileUser;
+
   createdEvents: Event[];
   joinedEvents: Event[];
+  favoriteEvents: Event[];
 }
 
 export interface UpdateProfileData {

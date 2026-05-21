@@ -50,7 +50,11 @@ export default function ProfilePage() {
     );
   }
 
-  const { user, createdEvents, joinedEvents } = profile;
+  const { user, createdEvents, joinedEvents, favoriteEvents } = profile;
+//   const visibleFavoriteEvents = favoriteEvents.filter((event) =>
+//   user.favoriteEvents?.includes(event.id || event._id || "")
+// );
+
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -115,7 +119,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <div className="mt-8 grid gap-4 md:grid-cols-2">
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
             <div className="rounded-2xl border border-slate-800 bg-slate-950 p-5">
               <p className="text-sm text-slate-400">Created events</p>
               <p className="mt-2 text-3xl font-bold text-white">
@@ -129,6 +133,13 @@ export default function ProfilePage() {
                 {joinedEvents.length}
               </p>
             </div>
+
+            <div className="rounded-2xl border border-slate-800 bg-slate-950 p-5">
+  <p className="text-sm text-slate-400">Favorite events</p>
+  <p className="mt-2 text-3xl font-bold text-white">
+    {favoriteEvents.length}
+  </p>
+</div>
           </div>
         </div>
 
@@ -166,6 +177,66 @@ export default function ProfilePage() {
 </div>
           )}
         </section>
+ 
+<section className="mb-14">
+  <h2 className="mb-5 text-2xl font-bold text-white">
+    Favorite events
+  </h2>
+
+  {favoriteEvents.length > 0 ? (
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {favoriteEvents.map((event) => (
+       <EventCard
+  key={event.id || event._id}
+  event={event}
+  onFavoriteChange={(eventId, isFavorite) => {
+    if (!isFavorite) {
+      setProfile((prevProfile) => {
+        if (!prevProfile) return prevProfile;
+
+        return {
+          ...prevProfile,
+          favoriteEvents: prevProfile.favoriteEvents.filter(
+            (favoriteEvent) =>
+              (favoriteEvent.id || favoriteEvent._id) !== eventId
+          ),
+          user: {
+            ...prevProfile.user,
+            favoriteEvents: prevProfile.user.favoriteEvents?.filter(
+              (favoriteEventId) => favoriteEventId !== eventId
+            ),
+          },
+        };
+      });
+    }
+  }}
+/>
+      ))}
+    </div>
+  ) : (
+    <div className="rounded-3xl border border-slate-800 bg-slate-900 p-10 text-center">
+      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-red-500/10 text-2xl">
+        ❤️
+      </div>
+
+      <h3 className="mt-5 text-xl font-semibold text-white">
+        No favorite events yet
+      </h3>
+
+      <p className="mt-3 text-sm text-slate-400">
+        Save interesting events and find them here later.
+      </p>
+
+      <Link
+        href="/events"
+        className="mt-6 inline-flex rounded-xl border border-slate-700 bg-slate-950 px-5 py-3 text-sm font-semibold text-slate-200 transition hover:border-blue-500 hover:text-white"
+      >
+        Browse events
+      </Link>
+    </div>
+  )}
+</section>
+
 
         <section>
           <h2 className="mb-5 text-2xl font-bold text-white">Joined events</h2>

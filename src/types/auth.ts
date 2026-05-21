@@ -15,6 +15,7 @@ export interface AuthUser {
   email: string;
   role: "user" | "admin";
   avatar?: string;
+  favoriteEvents?: string[];
 }
 
 export interface AuthResponse {

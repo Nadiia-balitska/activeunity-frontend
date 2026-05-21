@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 
+import { FavoriteButton } from "@/features/events/components/FavoriteButton";
+
 import type { Event } from "@/types/event";
 import { useAuthStore } from "@/store/authStore";
 
 interface EventCardProps {
   event: Event;
+  onFavoriteChange?: (eventId: string, isFavorite: boolean) => void;
 }
 
 function getEventId(event: Event) {
@@ -23,15 +26,19 @@ function getOrganizerId(event: Event) {
   return event.organizer.id || event.organizer._id || "";
 }
 
-export function EventCard({ event }: EventCardProps) {
+export function EventCard({ event, onFavoriteChange }: EventCardProps) {
   const { user } = useAuthStore();
 
+  const favoriteEvents = user?.favoriteEvents || [];
+
   const eventId = getEventId(event);
+  const isFavorite = favoriteEvents.includes(eventId);
+
   const organizerId = getOrganizerId(event);
-  
+
   const userId =
-  (user as { id?: string; _id?: string })?.id ||
-  (user as { id?: string; _id?: string })?._id;
+    (user as { id?: string; _id?: string })?.id ||
+    (user as { id?: string; _id?: string })?._id;
 
   const isMyEvent = Boolean(userId && organizerId === userId);
 
@@ -48,7 +55,13 @@ export function EventCard({ event }: EventCardProps) {
 
   return (
     <Link href={`/events/${eventId}`} className="group block h-full">
-      <article className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 shadow-xl shadow-black/10 transition duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-blue-500/10">
+      <article className="relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 shadow-xl shadow-black/10 transition duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-blue-500/10">
+    <FavoriteButton
+  eventId={eventId}
+  isFavorite={isFavorite}
+  onFavoriteChange={onFavoriteChange}
+/>
+
         <div className="relative h-56 overflow-hidden bg-slate-800">
           {event.image ? (
             <img
@@ -95,7 +108,9 @@ export function EventCard({ event }: EventCardProps) {
 
           <div className="mt-auto pt-6">
             <div className="space-y-2">
-              <p className="text-sm text-slate-400">📍 {event.location}</p>
+              <p className="text-sm text-slate-400">
+                📍 {event.location}
+              </p>
 
               <p className="text-sm text-slate-400">
                 👥 {participantsCount}

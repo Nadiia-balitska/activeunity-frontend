@@ -27,6 +27,23 @@ export const userService = {
   const response = await apiClient.get<UserProfileResponse>(`/users/${id}`);
   return response.data;
 },
+
+
+addFavoriteEvent: async (eventId: string) => {
+  const response = await apiClient.post(
+    `/users/favorites/${eventId}`
+  );
+
+  return response.data;
+},
+
+removeFavoriteEvent: async (eventId: string) => {
+  const response = await apiClient.delete(
+    `/users/favorites/${eventId}`
+  );
+
+  return response.data;
+},
 };
 
 
