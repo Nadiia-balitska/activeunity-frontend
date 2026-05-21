@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react";
 import type { Event } from "@/types/event";
 import { EventActions } from "@/features/events/components/EventActions";
 import { EventOwnerActions } from "@/features/events/components/EventOwnerActions";
+import { EventParticipantsModal } from "@/features/events/components/EventParticipantsModal";
 import { useAuthStore } from "@/store/authStore";
 
 interface EventDetailsContentProps {
@@ -132,7 +133,10 @@ export function EventDetailsContent({ event }: EventDetailsContentProps) {
                 </dd>
               </div>
             </dl>
-
+<EventParticipantsModal
+  eventId={eventId}
+  participantsCount={participantsCount}
+/>
             <EventActions
               event={currentEvent}
               onEventChange={setCurrentEvent}
