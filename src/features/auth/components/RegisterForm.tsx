@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 import { useAuthStore } from "@/store/authStore";
 import type { RegisterData } from "@/types/auth";
@@ -11,8 +11,6 @@ import type { RegisterData } from "@/types/auth";
 export function RegisterForm() {
   const router = useRouter();
   const registerUser = useAuthStore((state) => state.register);
-
-  const [error, setError] = useState("");
 
   const {
     register,
@@ -22,11 +20,13 @@ export function RegisterForm() {
 
   const onSubmit = async (data: RegisterData) => {
     try {
-      setError("");
       await registerUser(data);
+
+      toast.success("Account created successfully.");
+
       router.push("/");
     } catch {
-      setError("Registration failed. Please try again.");
+      toast.error("Registration failed. Please try again.");
     }
   };
 
@@ -114,12 +114,6 @@ export function RegisterForm() {
               </p>
             )}
           </div>
-
-          {error && (
-            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-              {error}
-            </div>
-          )}
 
           <button
             type="submit"

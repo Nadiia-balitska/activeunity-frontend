@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 import { eventService } from "@/api/eventService";
 import type { Event, EventParticipant } from "@/types/event";
@@ -41,28 +42,30 @@ export function EventActions({ event, onEventChange }: EventActionsProps) {
   const { user } = useAuthStore();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const eventId = getEventId(event);
   const userId = getUserId(user);
   const participants = event.participants ?? [];
 
   const isJoined = participants.some(
-    (participant) => getParticipantId(participant) === userId,
+    (participant) => getParticipantId(participant) === userId
   );
 
   const isFull =
     event.maxParticipants !== undefined &&
     participants.length >= event.maxParticipants;
 
+  const isUnavailable =
+    event.status === "completed" || event.status === "cancelled";
+
   const handleJoin = async () => {
     if (!eventId) {
-      setError("Event id is missing.");
+      toast.error("Event id is missing.");
       return;
     }
 
     if (!userId) {
-      setError("User id is missing. Please log in again.");
+      toast.error("Please log in to join this event.");
       return;
     }
 
@@ -70,19 +73,16 @@ export function EventActions({ event, onEventChange }: EventActionsProps) {
 
     try {
       setIsLoading(true);
-      setError("");
 
-      await eventService.joinEvent(eventId);
+      const updatedEvent = await eventService.joinEvent(eventId);
 
-      onEventChange({
-        ...event,
-        participants: [...participants, userId],
-      });
+      onEventChange(updatedEvent);
+      toast.success("Joined event successfully.");
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data?.message || "Failed to join event.");
+        toast.error(error.response?.data?.message || "Failed to join event.");
       } else {
-        setError("Failed to join event.");
+        toast.error("Failed to join event.");
       }
     } finally {
       setIsLoading(false);
@@ -91,12 +91,12 @@ export function EventActions({ event, onEventChange }: EventActionsProps) {
 
   const handleLeave = async () => {
     if (!eventId) {
-      setError("Event id is missing.");
+      toast.error("Event id is missing.");
       return;
     }
 
     if (!userId) {
-      setError("User id is missing. Please log in again.");
+      toast.error("Please log in again.");
       return;
     }
 
@@ -104,21 +104,16 @@ export function EventActions({ event, onEventChange }: EventActionsProps) {
 
     try {
       setIsLoading(true);
-      setError("");
 
-      await eventService.leaveEvent(eventId);
+      const updatedEvent = await eventService.leaveEvent(eventId);
 
-      onEventChange({
-        ...event,
-        participants: participants.filter(
-          (participant) => getParticipantId(participant) !== userId,
-        ),
-      });
+      onEventChange(updatedEvent);
+      toast.success("Left event successfully.");
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data?.message || "Failed to leave event.");
+        toast.error(error.response?.data?.message || "Failed to leave event.");
       } else {
-        setError("Failed to leave event.");
+        toast.error("Failed to leave event.");
       }
     } finally {
       setIsLoading(false);
@@ -143,13 +138,11 @@ export function EventActions({ event, onEventChange }: EventActionsProps) {
         participants
       </p>
 
-      {error && (
-        <p className="mt-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-          {error}
+      {isUnavailable ? (
+        <p className="mt-4 rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-slate-300">
+          This event is no longer active.
         </p>
-      )}
-
-      {isJoined ? (
+      ) : isJoined ? (
         <button
           type="button"
           onClick={handleLeave}

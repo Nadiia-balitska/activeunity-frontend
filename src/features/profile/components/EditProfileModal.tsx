@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 import { userService } from "@/api/userService";
 import { useAuthStore } from "@/store/authStore";
@@ -33,7 +34,6 @@ export function EditProfileModal({
   const [avatar, setAvatar] = useState(initialAvatar);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const inputClassName =
     "mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-60";
@@ -44,23 +44,21 @@ export function EditProfileModal({
     setIsOpen(false);
     setName(initialName);
     setAvatar(initialAvatar);
-    setError("");
   };
 
   const handleSave = async () => {
     if (name.trim().length < 2) {
-      setError("Name must be at least 2 characters.");
+      toast.error("Name must be at least 2 characters.");
       return;
     }
 
     if (avatar && !isValidUrl(avatar)) {
-      setError("Avatar must be a valid URL.");
+      toast.error("Avatar must be a valid URL.");
       return;
     }
 
     try {
       setIsLoading(true);
-      setError("");
 
       const response = await userService.updateProfile({
         name,
@@ -78,12 +76,13 @@ export function EditProfileModal({
         avatar: response.user.avatar,
       });
 
+      toast.success("Profile updated successfully.");
       setIsOpen(false);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data?.message || "Failed to update profile.");
+        toast.error(error.response?.data?.message || "Failed to update profile.");
       } else {
-        setError("Failed to update profile.");
+        toast.error("Failed to update profile.");
       }
     } finally {
       setIsLoading(false);
@@ -109,12 +108,6 @@ export function EditProfileModal({
                 Update your display name and avatar.
               </p>
             </div>
-
-            {error && (
-              <p className="mb-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-                {error}
-              </p>
-            )}
 
             <div className="grid gap-5">
               <div>

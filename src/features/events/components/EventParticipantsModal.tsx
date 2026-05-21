@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 import { eventService } from "@/api/eventService";
 import type { EventParticipant } from "@/types/event";
@@ -26,12 +27,10 @@ export function EventParticipantsModal({
   const [isOpen, setIsOpen] = useState(false);
   const [participants, setParticipants] = useState<EventParticipant[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const loadParticipants = async () => {
     try {
       setIsLoading(true);
-      setError("");
 
       const response = await eventService.getEventParticipants(eventId);
 
@@ -39,11 +38,11 @@ export function EventParticipantsModal({
       setIsOpen(true);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setError(
+        toast.error(
           error.response?.data?.message || "Failed to load participants."
         );
       } else {
-        setError("Failed to load participants.");
+        toast.error("Failed to load participants.");
       }
     } finally {
       setIsLoading(false);
@@ -60,12 +59,6 @@ export function EventParticipantsModal({
       >
         {isLoading ? "Loading..." : `View participants (${participantsCount})`}
       </button>
-
-      {error && (
-        <p className="mt-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-          {error}
-        </p>
-      )}
 
       {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">

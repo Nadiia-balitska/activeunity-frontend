@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+
 import { useAuthStore } from "@/store/authStore";
 import { eventService } from "@/api/eventService";
 import { EventCard } from "@/features/events/components/EventCard";
@@ -19,14 +21,13 @@ export function EventsList() {
   });
 
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
 
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
   useEffect(() => {
     const loadEvents = async () => {
       try {
         setIsLoading(true);
-        setError("");
 
         const response = await eventService.getEvents({
           search: filters.search || undefined,
@@ -38,7 +39,7 @@ export function EventsList() {
         setEvents(response.events);
         setPages(response.pages || 1);
       } catch {
-        setError("Failed to load events.");
+        toast.error("Failed to load events.");
       } finally {
         setIsLoading(false);
       }
@@ -115,7 +116,7 @@ export function EventsList() {
               onChange={handleFilterChange}
               className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-blue-500"
             >
-               <option value="">Select category</option>
+              <option value="">All categories</option>
               <option value="environment">Environment</option>
               <option value="education">Education</option>
               <option value="sports together">Sports Together</option>
@@ -151,13 +152,7 @@ export function EventsList() {
 
         {isLoading && <p className="text-slate-300">Loading events...</p>}
 
-        {error && (
-          <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-            {error}
-          </div>
-        )}
-
-        {!isLoading && !error && events.length === 0 && (
+        {!isLoading && events.length === 0 && (
           <div className="rounded-2xl border border-slate-800 bg-slate-900 p-8 text-center shadow-xl">
             <h2 className="text-lg font-semibold text-white">
               No events found
@@ -169,7 +164,7 @@ export function EventsList() {
           </div>
         )}
 
-        {!isLoading && !error && events.length > 0 && (
+        {!isLoading && events.length > 0 && (
           <>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {events.map((event) => (

@@ -4,6 +4,7 @@ import Link from "next/link";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 import { eventService } from "@/api/eventService";
 
@@ -23,7 +24,6 @@ export function EventOwnerActions({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [error, setError] = useState("");
 
   const isInactive =
     currentStatus === "completed" || currentStatus === "cancelled";
@@ -31,16 +31,23 @@ export function EventOwnerActions({
   const handleStatusUpdate = async (status: string) => {
     try {
       setIsUpdatingStatus(true);
-      setError("");
 
       await eventService.updateEvent(eventId, { status });
 
       onStatusChange?.(status);
+
+      if (status === "completed") {
+        toast.success("Event marked as completed.");
+      } else if (status === "cancelled") {
+        toast.success("Event cancelled.");
+      } else {
+        toast.success("Event reopened.");
+      }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data?.message || "Failed to update status.");
+        toast.error(error.response?.data?.message || "Failed to update status.");
       } else {
-        setError("Failed to update status.");
+        toast.error("Failed to update status.");
       }
     } finally {
       setIsUpdatingStatus(false);
@@ -50,16 +57,16 @@ export function EventOwnerActions({
   const handleDelete = async () => {
     try {
       setIsDeleting(true);
-      setError("");
 
       await eventService.deleteEvent(eventId);
 
+      toast.success("Event deleted successfully.");
       router.push("/events");
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setError(error.response?.data?.message || "Failed to delete event.");
+        toast.error(error.response?.data?.message || "Failed to delete event.");
       } else {
-        setError("Failed to delete event.");
+        toast.error("Failed to delete event.");
       }
     } finally {
       setIsDeleting(false);
@@ -130,12 +137,6 @@ export function EventOwnerActions({
             </>
           )}
         </div>
-
-        {error && (
-          <p className="mt-4 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-            {error}
-          </p>
-        )}
       </div>
 
       {isModalOpen && (

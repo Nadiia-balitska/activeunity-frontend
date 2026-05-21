@@ -1,18 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 import { useAuthStore } from "@/store/authStore";
 import type { LoginData } from "@/types/auth";
 
 export function LoginForm() {
   const router = useRouter();
-  const login = useAuthStore((state) => state.login);
 
-  const [error, setError] = useState("");
+  const login = useAuthStore((state) => state.login);
 
   const {
     register,
@@ -22,11 +21,13 @@ export function LoginForm() {
 
   const onSubmit = async (data: LoginData) => {
     try {
-      setError("");
       await login(data);
+
+      toast.success("Signed in successfully.");
+
       router.push("/");
     } catch {
-      setError("Invalid email or password");
+      toast.error("Invalid email or password.");
     }
   };
 
@@ -85,12 +86,6 @@ export function LoginForm() {
               </p>
             )}
           </div>
-
-          {error && (
-            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-              {error}
-            </div>
-          )}
 
           <button
             type="submit"

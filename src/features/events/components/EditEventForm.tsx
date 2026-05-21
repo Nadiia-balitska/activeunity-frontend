@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 import { eventService } from "@/api/eventService";
 import type { Event, UpdateEventData } from "@/types/event";
@@ -43,7 +44,6 @@ export function EditEventForm({ event }: EditEventFormProps) {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
-  const [submitError, setSubmitError] = useState("");
 
   const inputClassName =
     "mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-60";
@@ -91,13 +91,18 @@ export function EditEventForm({ event }: EditEventFormProps) {
 
     setErrors(newErrors);
 
-    return Object.keys(newErrors).length === 0;
+    if (Object.keys(newErrors).length > 0) {
+      toast.error("Please fix the form errors.");
+      return false;
+    }
+
+    return true;
   };
 
   const handleChange = (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    >
   ) => {
     const { name, value } = event.target;
 
@@ -116,7 +121,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
     event.preventDefault();
 
     if (!eventId) {
-      setSubmitError("Event id is missing.");
+      toast.error("Event id is missing.");
       return;
     }
 
@@ -124,13 +129,13 @@ export function EditEventForm({ event }: EditEventFormProps) {
 
     try {
       setIsLoading(true);
-      setSubmitError("");
 
       const updatedEvent = await eventService.updateEvent(eventId, formData);
 
+      toast.success("Event updated successfully.");
       router.push(`/events/${updatedEvent.id || updatedEvent._id}`);
     } catch {
-      setSubmitError("Failed to update event. Please try again.");
+      toast.error("Failed to update event. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -142,12 +147,6 @@ export function EditEventForm({ event }: EditEventFormProps) {
       noValidate
       className="rounded-3xl border border-slate-800 bg-slate-900 p-8 shadow-2xl shadow-black/20"
     >
-      {submitError && (
-        <p className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-          {submitError}
-        </p>
-      )}
-
       <div className="grid gap-5">
         <div>
           <label className={labelClassName}>Title</label>
@@ -218,7 +217,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
               disabled={isLoading}
               className={selectClassName}
             >
-             <option value="">Select category</option>
+              <option value="">Select category</option>
               <option value="environment">Environment</option>
               <option value="education">Education</option>
               <option value="sports together">Sports Together</option>
