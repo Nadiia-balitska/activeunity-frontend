@@ -33,7 +33,7 @@ export function EventDetailsContent({ event }: EventDetailsContentProps) {
 
   const eventId = currentEvent.id || currentEvent._id || "";
   const organizerId = getOrganizerId(currentEvent.organizer);
-  
+
 const userId =
   (user as { id?: string; _id?: string })?.id ||
   (user as { id?: string; _id?: string })?._id;
@@ -108,6 +108,47 @@ const userId =
             <p className="mt-5 max-w-3xl text-base leading-8 text-slate-300">
               {currentEvent.description}
             </p>
+            
+            <div className="mt-8 flex items-center gap-4 rounded-2xl border border-slate-800 bg-slate-950 p-5">
+  <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border border-blue-500/20 bg-blue-500/10 text-lg font-bold text-blue-300">
+    {currentEvent.organizer &&
+    typeof currentEvent.organizer !== "string" &&
+    currentEvent.organizer.avatar ? (
+      <img
+        src={currentEvent.organizer.avatar}
+        alt={currentEvent.organizer.name}
+        className="h-full w-full object-cover"
+      />
+    ) : currentEvent.organizer &&
+      typeof currentEvent.organizer !== "string" ? (
+      currentEvent.organizer.name.charAt(0).toUpperCase()
+    ) : (
+      "O"
+    )}
+  </div>
+
+  <div className="min-w-0">
+    <div className="mb-1 flex items-center gap-2">
+      <p className="font-semibold text-white">
+        {currentEvent.organizer &&
+        typeof currentEvent.organizer !== "string"
+          ? currentEvent.organizer.name
+          : "Organizer"}
+      </p>
+
+      <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-2 py-0.5 text-xs font-semibold text-blue-300">
+        Organizer
+      </span>
+    </div>
+
+    {currentEvent.organizer &&
+      typeof currentEvent.organizer !== "string" && (
+        <p className="truncate text-sm text-slate-400">
+          {currentEvent.organizer.email}
+        </p>
+      )}
+  </div>
+</div>
 
             <dl className="mt-10 grid gap-6 border-t border-slate-800 pt-8 md:grid-cols-3">
               <div>
