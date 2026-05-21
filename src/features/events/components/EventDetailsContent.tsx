@@ -14,6 +14,16 @@ interface EventDetailsContentProps {
   event: Event;
 }
 
+function getOrganizerId(organizer: Event["organizer"]) {
+  if (!organizer) return "";
+
+  if (typeof organizer === "string") {
+    return organizer;
+  }
+
+  return organizer.id || organizer._id || "";
+}
+
 export function EventDetailsContent({ event }: EventDetailsContentProps) {
   const [currentEvent, setCurrentEvent] = useState<Event>(event);
 
@@ -22,22 +32,13 @@ export function EventDetailsContent({ event }: EventDetailsContentProps) {
   const participantsCount = currentEvent.participants?.length ?? 0;
 
   const eventId = currentEvent.id || currentEvent._id || "";
-
   const organizerId = getOrganizerId(currentEvent.organizer);
+  
+const userId =
+  (user as { id?: string; _id?: string })?.id ||
+  (user as { id?: string; _id?: string })?._id;
 
-  const userId = user?.id;
-
-  const isMyEvent = Boolean(userId && organizerId === userId);
-
-  function getOrganizerId(organizer: Event["organizer"]) {
-    if (!organizer) return "";
-
-    if (typeof organizer === "string") {
-      return organizer;
-    }
-
-    return organizer.id || organizer._id || "";
-  }
+  const isMyEvent = Boolean(userId && organizerId && organizerId === userId);
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -133,10 +134,12 @@ export function EventDetailsContent({ event }: EventDetailsContentProps) {
                 </dd>
               </div>
             </dl>
-<EventParticipantsModal
-  eventId={eventId}
-  participantsCount={participantsCount}
-/>
+
+            <EventParticipantsModal
+              eventId={eventId}
+              participantsCount={participantsCount}
+            />
+
             <EventActions
               event={currentEvent}
               onEventChange={setCurrentEvent}

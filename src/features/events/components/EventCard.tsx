@@ -26,7 +26,10 @@ export function EventCard({ event }: EventCardProps) {
 
   const eventId = getEventId(event);
   const organizerId = getOrganizerId(event);
-  const userId = user?.id;
+  
+  const userId =
+  (user as { id?: string; _id?: string })?.id ||
+  (user as { id?: string; _id?: string })?._id;
 
   const isMyEvent = Boolean(userId && organizerId === userId);
 

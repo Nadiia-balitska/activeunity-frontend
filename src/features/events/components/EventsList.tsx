@@ -115,11 +115,14 @@ export function EventsList() {
               onChange={handleFilterChange}
               className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-blue-500"
             >
-              <option value="">All categories</option>
+               <option value="">Select category</option>
               <option value="environment">Environment</option>
               <option value="education">Education</option>
-              <option value="sport">Sport</option>
+              <option value="sports together">Sports Together</option>
+              <option value="running">Running</option>
+              <option value="active recreation">Active Recreation</option>
               <option value="culture">Culture</option>
+              <option value="entertainment">Entertainment</option>
               <option value="volunteering">Volunteering</option>
               <option value="other">Other</option>
             </select>
