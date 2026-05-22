@@ -6,6 +6,8 @@ import { useState } from "react";
 
 import { useAuthStore } from "@/store/authStore";
 
+import { NotificationDropdown } from "@/components/NotificationDropdown";
+
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -48,12 +50,15 @@ export function Navbar() {
 
           {isAuthenticated ? (
             <div className="flex items-center gap-4">
+              
               <Link
                 href="/profile"
                 className="text-sm font-medium text-slate-300 transition hover:text-blue-400"
               >
                 {user?.name}
               </Link>
+              
+              <NotificationDropdown />
 
               <button
                 type="button"
@@ -120,6 +125,8 @@ export function Navbar() {
                 >
                   {user?.name || "Profile"}
                 </Link>
+                
+                <NotificationDropdown />
 
                 <button
                   type="button"
