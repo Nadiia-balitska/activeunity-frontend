@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 import { eventService } from "@/api/eventService";
+import { uploadService } from "@/api/uploadService";
 import type { Event, UpdateEventData } from "@/types/event";
 
 interface EditEventFormProps {
@@ -44,6 +45,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const inputClassName =
     "mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-60";
@@ -102,7 +104,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
   const handleChange = (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = event.target;
 
@@ -115,6 +117,42 @@ export function EditEventForm({ event }: EditEventFormProps) {
       ...prevErrors,
       [name]: undefined,
     }));
+  };
+
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file.");
+      return;
+    }
+
+    try {
+      setIsUploadingImage(true);
+
+      const imageUrl = await uploadService.uploadImage(file);
+
+      setFormData((prevData) => ({
+        ...prevData,
+        image: imageUrl,
+      }));
+
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        image: undefined,
+      }));
+
+      toast.success("Image uploaded successfully.");
+    } catch {
+      toast.error("Failed to upload image.");
+    } finally {
+      setIsUploadingImage(false);
+      event.target.value = "";
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -182,6 +220,7 @@ export function EditEventForm({ event }: EditEventFormProps) {
             <label className={labelClassName}>Date and time</label>
             <input
               type="datetime-local"
+              lang="en"
               name="date"
               value={formData.date || ""}
               onChange={handleChange}
@@ -267,6 +306,24 @@ export function EditEventForm({ event }: EditEventFormProps) {
         </div>
 
         <div>
+          <label className={labelClassName}>Event image</label>
+
+          <div className="mt-2 rounded-2xl border border-dashed border-slate-700 bg-slate-950 p-5">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              disabled={isLoading || isUploadingImage}
+              className="block w-full text-sm text-slate-300 file:mr-4 file:rounded-xl file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+            />
+
+            <p className="mt-3 text-xs text-slate-500">
+              Upload a new image from your computer or paste an image URL below.
+            </p>
+          </div>
+        </div>
+
+        <div>
           <label className={labelClassName}>Image URL</label>
 
           <input
@@ -274,14 +331,10 @@ export function EditEventForm({ event }: EditEventFormProps) {
             name="image"
             value={formData.image || ""}
             onChange={handleChange}
-            disabled={isLoading}
+            disabled={isLoading || isUploadingImage}
             className={inputClassName}
             placeholder="https://example.com/image.jpg"
           />
-
-          <p className="mt-2 text-xs text-slate-500">
-            Paste a public image URL for your event cover.
-          </p>
 
           {errors.image && <p className={errorClassName}>{errors.image}</p>}
         </div>
@@ -299,10 +352,14 @@ export function EditEventForm({ event }: EditEventFormProps) {
 
       <button
         type="submit"
-        disabled={isLoading}
+        disabled={isLoading || isUploadingImage}
         className="mt-8 w-full rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {isLoading ? "Saving changes..." : "Save changes"}
+        {isLoading
+          ? "Saving changes..."
+          : isUploadingImage
+            ? "Uploading image..."
+            : "Save changes"}
       </button>
     </form>
   );

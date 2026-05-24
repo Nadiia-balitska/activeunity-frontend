@@ -14,6 +14,7 @@ import type { UserProfileResponse } from "@/types/user";
 export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfileResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAvatarOpen, setIsAvatarOpen] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -62,7 +63,13 @@ export default function ProfilePage() {
         <div className="mb-10 rounded-3xl border border-slate-800 bg-slate-900 p-8 shadow-2xl shadow-black/20">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-col gap-5 md:flex-row md:items-center">
-              <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 text-3xl font-bold text-blue-300">
+
+              
+              <button
+  type="button"
+  onClick={() => user.avatar && setIsAvatarOpen(true)}
+  className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-3xl border border-slate-800 bg-slate-950 text-3xl font-bold text-blue-300 transition hover:scale-105"
+>
                 {user.avatar ? (
                   <img
                     src={user.avatar}
@@ -72,7 +79,7 @@ export default function ProfilePage() {
                 ) : (
                   user.name.charAt(0).toUpperCase()
                 )}
-              </div>
+              </button>
 
               <div>
                 <p className="mb-4 inline-flex rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-300">
@@ -179,8 +186,8 @@ export default function ProfilePage() {
 </div>
           )}
         </section>
- 
-<section className="mb-14">
+        
+        <section className="mb-14">
   <h2 className="mb-5 text-2xl font-bold text-white">
     Favorite events
   </h2>
@@ -237,7 +244,7 @@ export default function ProfilePage() {
       </Link>
     </div>
   )}
-</section>
+  </section>
 
 
         <section>
@@ -275,6 +282,26 @@ export default function ProfilePage() {
 
 
       </section>
+
+
+{/* Avatar Modal */}
+      {isAvatarOpen && user.avatar && (
+  <div
+    className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+    onClick={() => setIsAvatarOpen(false)}
+  >
+    <div
+      className="max-h-[90vh] max-w-4xl overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 shadow-2xl"
+      onClick={(event) => event.stopPropagation()}
+    >
+      <img
+        src={user.avatar}
+        alt={user.name}
+        className="max-h-[90vh] w-full object-contain"
+      />
+    </div>
+  </div>
+)}
     </main>
   );
 }

@@ -5,6 +5,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 import { userService } from "@/api/userService";
+import { uploadService } from "@/api/uploadService";
 import { useAuthStore } from "@/store/authStore";
 
 interface EditProfileModalProps {
@@ -34,16 +35,45 @@ export function EditProfileModal({
   const [avatar, setAvatar] = useState(initialAvatar);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
   const inputClassName =
     "mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-blue-500 disabled:cursor-not-allowed disabled:opacity-60";
 
   const handleClose = () => {
-    if (isLoading) return;
+    if (isLoading || isUploadingAvatar) return;
 
     setIsOpen(false);
     setName(initialName);
     setAvatar(initialAvatar);
+  };
+
+  const handleAvatarUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file.");
+      return;
+    }
+
+    try {
+      setIsUploadingAvatar(true);
+
+      const imageUrl = await uploadService.uploadImage(file);
+
+      setAvatar(imageUrl);
+
+      toast.success("Avatar uploaded successfully.");
+    } catch {
+      toast.error("Failed to upload avatar.");
+    } finally {
+      setIsUploadingAvatar(false);
+      event.target.value = "";
+    }
   };
 
   const handleSave = async () => {
@@ -117,10 +147,30 @@ export function EditProfileModal({
                 <input
                   value={name}
                   onChange={(event) => setName(event.target.value)}
-                  disabled={isLoading}
+                  disabled={isLoading || isUploadingAvatar}
                   className={inputClassName}
                   placeholder="Your name"
                 />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-slate-300">
+                  Avatar image
+                </label>
+
+                <div className="mt-2 rounded-2xl border border-dashed border-slate-700 bg-slate-950 p-5">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarUpload}
+                    disabled={isLoading || isUploadingAvatar}
+                    className="block w-full text-sm text-slate-300 file:mr-4 file:rounded-xl file:border-0 file:bg-blue-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+                  />
+
+                  <p className="mt-3 text-xs text-slate-500">
+                    Upload an avatar from your computer or paste an image URL below.
+                  </p>
+                </div>
               </div>
 
               <div>
@@ -130,7 +180,7 @@ export function EditProfileModal({
                 <input
                   value={avatar}
                   onChange={(event) => setAvatar(event.target.value)}
-                  disabled={isLoading}
+                  disabled={isLoading || isUploadingAvatar}
                   className={inputClassName}
                   placeholder="https://example.com/avatar.jpg"
                 />
@@ -151,7 +201,7 @@ export function EditProfileModal({
               <button
                 type="button"
                 onClick={handleClose}
-                disabled={isLoading}
+                disabled={isLoading || isUploadingAvatar}
                 className="rounded-xl border border-slate-700 bg-slate-950 px-5 py-3 text-sm font-semibold text-slate-300 transition hover:border-slate-500 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
               >
                 Cancel
@@ -160,10 +210,14 @@ export function EditProfileModal({
               <button
                 type="button"
                 onClick={handleSave}
-                disabled={isLoading}
+                disabled={isLoading || isUploadingAvatar}
                 className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-600/20 transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isLoading ? "Saving..." : "Save changes"}
+                {isUploadingAvatar
+                  ? "Uploading avatar..."
+                  : isLoading
+                    ? "Saving..."
+                    : "Save changes"}
               </button>
             </div>
           </div>
