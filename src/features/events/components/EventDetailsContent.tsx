@@ -5,9 +5,12 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 import type { Event } from "@/types/event";
+
 import { EventActions } from "@/features/events/components/EventActions";
 import { EventOwnerActions } from "@/features/events/components/EventOwnerActions";
 import { EventParticipantsModal } from "@/features/events/components/EventParticipantsModal";
+import { CommentsSection } from "@/features/events/components/CommentsSection";
+
 import { useAuthStore } from "@/store/authStore";
 
 interface EventDetailsContentProps {
@@ -203,6 +206,10 @@ const userId =
                 }
               />
             )}
+
+            {eventId && <CommentsSection   organizerId={organizerId} eventId={eventId} />}
+
+
           </div>
         </article>
       </section>
